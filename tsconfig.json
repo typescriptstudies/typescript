@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {        
+        "outFile": "project.js"
+    },
+    "exclude": [
+        "node_modules"
+    ],
+    "files": [   
+        "webassembly.d.ts",
+        "text-encoding.d.ts",
+        "rawdata.ts",
+        "globalutils.ts",
+        "types.ts",
+        "config.ts",
+        "utils.ts",
+        "node.ts",
+        "wboard.ts",
+        "board/draw.ts",
+        "board/utils.ts",
+        "board.ts",        
+        "main.ts"
+    ]
+}

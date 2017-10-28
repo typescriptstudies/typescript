@@ -1,0 +1,1 @@
+emcc board.c utils.c boardutils.c -Os -s WASM=1 -s SIDE_MODULE=1 -o %WASM_BASE_DIR%\board\board.wasm
