@@ -133,7 +133,7 @@ export function draw(){
             spos("absolute").
             finalize()
 
-        let moveinfos:[string,Move][]=this.legalMoves().map(x=>[this.moveToSan(x),x])
+        /*let moveinfos:[string,Move][]=this.legalMoves().map(x=>[this.moveToSan(x),x])
         moveinfos.sort((a:[string,Move],b:[string,Move])=>{
             if((a[0][0].toLocaleUpperCase()==a[0][0])&&(b[0][0].toLocaleUpperCase()!=b[0][0])) return -1
             if((b[0][0].toLocaleUpperCase()==b[0][0])&&(a[0][0].toLocaleUpperCase()!=a[0][0])) return 1
@@ -142,6 +142,15 @@ export function draw(){
         
         moveinfos.map(mi=>{            
             movesdiv.a(new A_("#",mi[0],legalmoveclicked.bind(this,mi[1])))
+            movesdiv.a(new Br_())
+        })*/
+
+        let wb:wBoard=this.wb
+
+        let sortedlegalsans:string[]=wb.sortedLegalSanList().split("\n")
+
+        sortedlegalsans.map(san=>{
+            movesdiv.a(new A_("#",san,legalmoveclicked.bind(this,san)))
             movesdiv.a(new Br_())
         })
 
@@ -359,8 +368,8 @@ function piecedragstart(pid:string,e:Event){
     }
 }
 
-function legalmoveclicked(m:Move,e:Event){    
-    this.makeMove(m)
+function legalmoveclicked(san:string,e:Event){    
+    this.makeSanMove(san)
     this.draw()
 }
 
@@ -412,7 +421,7 @@ function wboarddraw(){
     if(!this.HAS_WASM()) return
     let wb:wBoard=this.wb
     console.log(wb.reportBoardText())
-    console.log(wb.out(2))
+    console.log(wb.out(2))    
 }
 
 }

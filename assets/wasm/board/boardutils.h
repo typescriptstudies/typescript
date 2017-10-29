@@ -52,6 +52,7 @@ extern uint8_t defaultMove(Board *b);
 extern uint8_t nextTurn(Board* b,uint8_t t);
 extern void advanceTurnOnce(Board* b);
 extern void advanceTurn(Board* b);
+extern Board* getBoardI(uint8_t i);
 
 extern void setTurn(uint8_t i,uint8_t t);
 extern void setFullmoveNumber(uint8_t i,int fn);

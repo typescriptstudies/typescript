@@ -20,6 +20,7 @@ extern Board boards[MAX_BOARDS];
 extern Move movebuff[MAX_BOARDS][MAX_MOVES];
 extern Move legalmovebuff[MAX_BOARDS][MAX_MOVES];
 extern Move tempmovebuff[MAX_BOARDS][MAX_MOVES];
+extern ExtendedMove extendedmovebuff[MAX_BOARDS][MAX_MOVES];
 
 // global constants
 
@@ -52,5 +53,7 @@ extern void toCase(uint64_t _case);
 extern int absv(int x);
 
 extern void _memcpy(uint8_t* from,uint8_t* to,int size);
+extern str _strcpys(str from,str to,int size);
+extern void _swap(uint8_t* p1,uint8_t* p2,int size);
 
 #endif

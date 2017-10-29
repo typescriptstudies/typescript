@@ -11,6 +11,10 @@
 
 #define MAX_CASTLING_SIDES 2
 
+#define MAX_SAN_LENGTH 20
+
+#define MAX_STRUCT_SIZE 10000
+
 // square
 
 typedef struct{
@@ -51,6 +55,11 @@ typedef struct{
 	Square epsq; // ep square
 	Square epclsq; // ep clear square
 } Move;
+
+typedef struct{
+	Move m;
+	uint8_t san[MAX_SAN_LENGTH+1];
+} ExtendedMove;
 
 // castling registry
 

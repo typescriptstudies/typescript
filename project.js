@@ -1441,6 +1441,11 @@ var wBoard = /** @class */ (function (_super) {
         if (i === void 0) { i = 0; }
         this.exports._setCastlingRegistryPassing(i, ci, cs, si, f, r);
     };
+    wBoard.prototype.sortedLegalSanList = function (i) {
+        if (i === void 0) { i = 0; }
+        this.exports._sortedLegalSanListI(i);
+        return this.out();
+    };
     return wBoard;
 }(GlobalUtils.WasmLoader));
 var BoardDraw;
@@ -1578,16 +1583,21 @@ var BoardDraw;
                 sff("monospace").
                 spos("absolute").
                 finalize();
-            var moveinfos = this.legalMoves().map(function (x) { return [_this.moveToSan(x), x]; });
-            moveinfos.sort(function (a, b) {
-                if ((a[0][0].toLocaleUpperCase() == a[0][0]) && (b[0][0].toLocaleUpperCase() != b[0][0]))
-                    return -1;
-                if ((b[0][0].toLocaleUpperCase() == b[0][0]) && (a[0][0].toLocaleUpperCase() != a[0][0]))
-                    return 1;
-                return a[0].localeCompare(b[0], "en");
-            });
-            moveinfos.map(function (mi) {
-                movesdiv_1.a(new A_("#", mi[0], legalmoveclicked.bind(_this, mi[1])));
+            /*let moveinfos:[string,Move][]=this.legalMoves().map(x=>[this.moveToSan(x),x])
+            moveinfos.sort((a:[string,Move],b:[string,Move])=>{
+                if((a[0][0].toLocaleUpperCase()==a[0][0])&&(b[0][0].toLocaleUpperCase()!=b[0][0])) return -1
+                if((b[0][0].toLocaleUpperCase()==b[0][0])&&(a[0][0].toLocaleUpperCase()!=a[0][0])) return 1
+                return a[0].localeCompare(b[0],"en")
+            })
+            
+            moveinfos.map(mi=>{
+                movesdiv.a(new A_("#",mi[0],legalmoveclicked.bind(this,mi[1])))
+                movesdiv.a(new Br_())
+            })*/
+            var wb = this.wb;
+            var sortedlegalsans = wb.sortedLegalSanList().split("\n");
+            sortedlegalsans.map(function (san) {
+                movesdiv_1.a(new A_("#", san, legalmoveclicked.bind(_this, san)));
                 movesdiv_1.a(new Br_());
             });
             movestd.a(movesdiv_1);
@@ -1797,8 +1807,8 @@ var BoardDraw;
             this.draw();
         }
     }
-    function legalmoveclicked(m, e) {
-        this.makeMove(m);
+    function legalmoveclicked(san, e) {
+        this.makeSanMove(san);
         this.draw();
     }
     function makesanhandler(e) {
@@ -3033,6 +3043,12 @@ var Board = /** @class */ (function () {
         if (m == null)
             return null;
         return this.toRichMove(m);
+    };
+    Board.prototype.makeSanMove = function (san) {
+        var rm = this.sanToRichMove(san);
+        if (rm != null) {
+            this.makeMove(rm);
+        }
     };
     Board.prototype.sanToMove = function (san) {
         var parts = san.split("=");

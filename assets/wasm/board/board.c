@@ -825,3 +825,64 @@ void reportBoardText(int i){
 
 	*ptr=0;
 }
+
+void sortedLegalSanList(Board* b){
+	str ptr=OUTBUF;
+
+	legalMovesForColor(b,b->turn,ptr);
+
+	b->mptr=(Move*)&legalmovebuff[b->index];	
+
+	ExtendedMove* emptr0=(ExtendedMove*)&extendedmovebuff[b->index];	
+
+	ExtendedMove* emptr=emptr0;
+
+	while(!(b->mptr->invalid)){
+		_memcpy((uint8_t*)b->mptr,(uint8_t*)&emptr->m,sizeof(Move));		
+		moveToSan(b,*b->mptr,(uint8_t*)&emptr->san);		
+		b->mptr++;
+		emptr++;
+	}	
+
+	emptr->m.invalid=1;
+
+	int sortstart=0;	
+
+	
+	while(!((emptr0+sortstart)->m.invalid)){		
+		int ci=0;		
+		while(!((emptr0+ci+sortstart+1)->m.invalid)){
+			ExtendedMove* em1=emptr0+ci;
+			ExtendedMove* em2=emptr0+ci+1;						
+			if(
+				(em1->san[0]>em2->san[0])
+				||
+				((em1->san[0]!='O')&&(em2->san[0]=='O'))
+			){
+				_swap((uint8_t*)em1,(uint8_t*)em2,sizeof(ExtendedMove));
+			} else if(
+				(em1->san[0]==em2->san[0])
+				&&
+				(em1->m.capture>em2->m.capture)
+				){
+				_swap((uint8_t*)em1,(uint8_t*)em2,sizeof(ExtendedMove));
+			}
+			ci++;
+		}
+		sortstart++;
+	}
+
+	emptr=emptr0;	
+
+	while(!(emptr->m.invalid)){
+		ptr=_strcpys((str)&emptr->san,ptr,MAX_SAN_LENGTH);
+		*ptr++='\n';
+		emptr++;		
+	}
+
+	*ptr=0;
+}
+
+void sortedLegalSanListI(int i){
+	sortedLegalSanList(getBoardI(i));
+}

@@ -15,6 +15,7 @@ Board boards[MAX_BOARDS];
 Move movebuff[MAX_BOARDS][MAX_MOVES];
 Move legalmovebuff[MAX_BOARDS][MAX_MOVES];
 Move tempmovebuff[MAX_BOARDS][MAX_MOVES];
+ExtendedMove extendedmovebuff[MAX_BOARDS][MAX_MOVES];
 
 // general utility functions
 
@@ -70,8 +71,26 @@ int absv(int x){
 	return -x;
 }
 
-extern void _memcpy(uint8_t* from,uint8_t* to,int size){
+void _memcpy(uint8_t* from,uint8_t* to,int size){
 	for(int i=0;i<size;i++){
 		*(to+i)=*(from+i);
 	}
+}
+
+str _strcpys(str from,str to,int size){
+	int i;
+	for(i=0;i<size;i++){
+		*(to+i)=*(from+i);
+		if(*(from+i)==0) return to+i;
+	}	
+	*(to+i)=0;
+	return to+i;
+}
+
+uint8_t swapbuff[MAX_STRUCT_SIZE];
+
+void _swap(uint8_t* p1,uint8_t* p2,int size){
+	_memcpy(p1,(uint8_t*)&swapbuff,size);
+	_memcpy(p2,p1,size);
+	_memcpy((uint8_t*)&swapbuff,p2,size);
 }

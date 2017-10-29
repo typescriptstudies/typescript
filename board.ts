@@ -1111,6 +1111,13 @@ class Board {
         return this.toRichMove(m)
     }
 
+    makeSanMove(san:string){
+        let rm=this.sanToRichMove(san)
+        if(rm!=null){
+            this.makeMove(rm)
+        }
+    }
+
     sanToMove(san:string):Move{
         let parts=san.split("=")
         let sannonprom=parts[0]

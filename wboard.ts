@@ -120,4 +120,8 @@ class wBoard extends GlobalUtils.WasmLoader{
     ){
         this.exports._setCastlingRegistryPassing(i,ci,cs,si,f,r)
     }
+    sortedLegalSanList(i:number=0):string{
+        this.exports._sortedLegalSanListI(i)
+        return this.out()
+    }
 }
