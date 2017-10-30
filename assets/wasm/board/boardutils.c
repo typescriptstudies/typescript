@@ -408,3 +408,11 @@ void pullCastling(Tokenizer *t){
 		}
 	}
 }
+
+uint8_t isMoveRoughlyEqualTo(Move m1,Move m2){
+	return (
+		isSquareEqualTo(m1.fsq,m2.fsq) &&
+		isSquareEqualTo(m1.tsq,m2.tsq) &&
+		( m1.prompiece.kind == m2.prompiece.kind )
+	);
+}

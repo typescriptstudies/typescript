@@ -68,4 +68,6 @@ extern void setCastlingRegistryPassing(uint8_t i,uint8_t ci,uint8_t cs,uint8_t s
 
 extern uint8_t* allPieceKinds(Board* b);
 
+extern uint8_t isMoveRoughlyEqualTo(Move m1,Move m2);
+
 #endif

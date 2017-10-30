@@ -72,6 +72,8 @@ typedef struct
 	Square passingsqs[MAX_FILES+1];
 } CastlingRegistry;
 
+typedef struct GameNode GameNodeT;
+
 // board
 
 typedef struct{
@@ -95,6 +97,20 @@ typedef struct{
 	CastlingRegistry castregs[MAX_PLAYERS][MAX_CASTLING_SIDES];
 	uint8_t stm;
 	Move sanm;
+	struct GameNode *root;
+	struct GameNode *current;
 } Board;
+
+// game node
+
+typedef struct GameNode{
+	Board b;
+	uint8_t free;	
+	Move genmove;
+	struct GameNode* parent;
+	struct GameNode* child;
+	struct GameNode* prevsibling;
+	struct GameNode* nextsibling;	
+} GameNode;
 
 #endif

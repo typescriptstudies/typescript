@@ -124,4 +124,22 @@ class wBoard extends GlobalUtils.WasmLoader{
         this.exports._sortedLegalSanListI(i)
         return this.out()
     }
+    deleteGameInfo(i:number=0){
+        this.exports._deleteGameInfoI(i)
+    }
+    back(i:number=0){
+        this.exports._backI(i)
+    }
+    forward(i:number=0){
+        this.exports._forwardI(i)
+    }
+    delete(i:number=0){
+        this.exports._deleteI(i)
+    }
+    tobegin(i:number=0){
+        this.exports._tobeginI(i)
+    }
+    toend(i:number=0){
+        this.exports._toendI(i)
+    }
 }

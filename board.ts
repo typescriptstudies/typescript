@@ -336,7 +336,7 @@ class Board {
                     cr.passingSquares[pi].rank
                 )                
             }
-        }
+        }        
     }
 
     setFromFen(fen:string){       
@@ -851,8 +851,11 @@ class Board {
     forward(){BoardUtils.forward.bind(this)()}    
     toEnd(){BoardUtils.toEnd.bind(this)()}
     del(){
-        this.back()
+        if(this.current.parent!=null){
+            this.toNode(this.current.parent)            
+        }
         this.current.childs=<{string:GameNode}>{}
+        this.wb.delete()
     }
     squaresBetween(sq1:Square,sq2:Square,withextremes:boolean=false){
         let dir=sq2.Minus(sq1).Normalize()      

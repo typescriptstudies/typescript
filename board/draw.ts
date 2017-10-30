@@ -261,6 +261,7 @@ function delhandler(e:Event){
 function resethandler(e:Event){
     if(this.enginerunning) this.stopanalysis()
     this.reset()
+    this.wb.deleteGameInfo()
     this.draw()
 }
 

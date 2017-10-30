@@ -1446,6 +1446,30 @@ var wBoard = /** @class */ (function (_super) {
         this.exports._sortedLegalSanListI(i);
         return this.out();
     };
+    wBoard.prototype.deleteGameInfo = function (i) {
+        if (i === void 0) { i = 0; }
+        this.exports._deleteGameInfoI(i);
+    };
+    wBoard.prototype.back = function (i) {
+        if (i === void 0) { i = 0; }
+        this.exports._backI(i);
+    };
+    wBoard.prototype.forward = function (i) {
+        if (i === void 0) { i = 0; }
+        this.exports._forwardI(i);
+    };
+    wBoard.prototype["delete"] = function (i) {
+        if (i === void 0) { i = 0; }
+        this.exports._deleteI(i);
+    };
+    wBoard.prototype.tobegin = function (i) {
+        if (i === void 0) { i = 0; }
+        this.exports._tobeginI(i);
+    };
+    wBoard.prototype.toend = function (i) {
+        if (i === void 0) { i = 0; }
+        this.exports._toendI(i);
+    };
     return wBoard;
 }(GlobalUtils.WasmLoader));
 var BoardDraw;
@@ -1699,6 +1723,7 @@ var BoardDraw;
         if (this.enginerunning)
             this.stopanalysis();
         this.reset();
+        this.wb.deleteGameInfo();
         this.draw();
     }
     function randomhandler(e) {
@@ -2062,18 +2087,21 @@ var BoardUtils;
     BoardUtils.toNode = toNode;
     function toBegin() {
         this.toNode(this.root);
+        this.wb.tobegin();
     }
     BoardUtils.toBegin = toBegin;
     function back() {
         if (this.current.parent != null) {
             this.toNode(this.current.parent);
         }
+        this.wb.back();
     }
     BoardUtils.back = back;
     function forward() {
         if (this.current.haschild()) {
             this.toNode(this.current.mainchild());
         }
+        this.wb.forward();
     }
     BoardUtils.forward = forward;
     function toEnd() {
@@ -2081,6 +2109,7 @@ var BoardUtils;
             this.current = this.current.mainchild();
         }
         this.toNode(this.current);
+        this.wb.toend();
     }
     BoardUtils.toEnd = toEnd;
 })(BoardUtils || (BoardUtils = {}));
@@ -2761,8 +2790,11 @@ var Board = /** @class */ (function () {
     Board.prototype.forward = function () { BoardUtils.forward.bind(this)(); };
     Board.prototype.toEnd = function () { BoardUtils.toEnd.bind(this)(); };
     Board.prototype.del = function () {
-        this.back();
+        if (this.current.parent != null) {
+            this.toNode(this.current.parent);
+        }
         this.current.childs = {};
+        this.wb["delete"]();
     };
     Board.prototype.squaresBetween = function (sq1, sq2, withextremes) {
         if (withextremes === void 0) { withextremes = false; }

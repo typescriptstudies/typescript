@@ -164,18 +164,21 @@ export function toNode(gn:GameNode,incremental:boolean=false){
 
 export function toBegin(){
     this.toNode(this.root)
+    this.wb.tobegin()
 }
 
 export function back(){
     if(this.current.parent!=null){
         this.toNode(this.current.parent)            
     }
+    this.wb.back()
 }
 
 export function forward(){
     if(this.current.haschild()){
         this.toNode(this.current.mainchild())
     }
+    this.wb.forward()
 }    
 
 export function toEnd(){
@@ -183,6 +186,7 @@ export function toEnd(){
         this.current=this.current.mainchild()
     }
     this.toNode(this.current)
+    this.wb.toend()
 }
 
 }

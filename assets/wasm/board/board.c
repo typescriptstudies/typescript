@@ -1,6 +1,9 @@
 #include "types.h"
 #include "utils.h"
 #include "boardutils.h"
+#include "game.h"
+
+uint8_t game_initialized_reported=0;
 
 // core board functions
 
@@ -35,6 +38,19 @@ void newBoard(int variant,int i){
 	b->halfmove_clock=0;
 	b->checkattack=0;
 	b->stm=0;
+
+	// init game
+	if(!game_initialized){
+		init_game();
+	}
+
+	b->root=&root_gamenodes[b->index];
+	b->current=b->root;
+
+	b->root->parent=0;
+	b->root->child=0;
+	b->root->prevsibling=0;
+	b->root->nextsibling=0;
 }
 
 str pseudoLegalVectorMovesForPieceAt(Board *b,int df,int dr,uint8_t single,Piece p,uint8_t f,uint8_t r,str ptr){	
@@ -597,6 +613,29 @@ str reportBoardRep(int i,str ptr){
 	return ptr;
 }
 
+str reportGame(int i,str ptr){
+	Board *b=&boards[i];
+
+	GameNode* current=b->root;
+
+	do{
+		current=getlastsibling(current);
+		if(current!=0){
+			ptr=moveToAlgeb(b,current->genmove,0,ptr);
+			if(current==b->current){
+				*ptr++='*';
+			}
+			*ptr++=' ';
+			*ptr++='>';
+			*ptr++=' ';
+		}
+	} while(current!=0);
+	
+	*ptr++='\n';
+
+	return ptr;
+}
+
 void setFromRawFen(int i){
 	Board *b=&boards[i];
 
@@ -626,6 +665,13 @@ void advanceClocks(Board* b,Move m){
 
 void makeMoveInner(Board* b,Move m){
 	str ptr=OUTBUF2;
+
+	if(!b->test){
+	/////////////////////////////////////////////////////////////////
+	// save board state before making move
+	_memcpy((uint8_t*)b,(uint8_t*)&b->current->b,sizeof(Board));
+	/////////////////////////////////////////////////////////////////
+	}
 
 	if(!b->test){
 		*ptr++='m';
@@ -706,6 +752,43 @@ void makeMoveInner(Board* b,Move m){
 	advanceTurn(b);
 
 	advanceClocks(b,m);
+
+	if(!b->test){
+	/////////////////////////////////////////////////////////////////
+	// create gamenode
+	GameNode* movenode=getmovenode(b->current,m);
+	if(movenode==0){				
+		if(b->current->child!=0) freeallchilds(b->current->child);
+		b->current->child=0;
+
+		GameNode* child=allocate_gamenode();
+		if(child==0) return; // out of memory
+
+		GameNode* ls=getlastsibling(b->current);
+
+		if(b->current->child==0){
+			b->current->child=child;
+		}
+
+		child->genmove=m;
+		child->parent=b->current;
+		child->child=0;		
+
+		child->prevsibling=ls;
+		if(ls!=0){
+			ls->nextsibling=child;
+		}
+		child->nextsibling=0;
+
+		b->current=child;
+
+		// save board state in new node
+		_memcpy((uint8_t*)b,(uint8_t*)&child->b,sizeof(Board));
+	} else {
+		b->current=movenode;
+	}
+	/////////////////////////////////////////////////////////////////
+	}
 }
 
 void makeMove(uint8_t i,uint8_t ff,uint8_t fr,uint8_t tf,uint8_t tr,uint8_t pk,uint8_t pc){
@@ -823,6 +906,8 @@ void reportBoardText(int i){
 		*ptr++='\n';
 	}
 
+	ptr=reportGame(i,ptr);
+
 	*ptr=0;
 }
 
@@ -885,4 +970,78 @@ void sortedLegalSanList(Board* b){
 
 void sortedLegalSanListI(int i){
 	sortedLegalSanList(getBoardI(i));
+}
+
+void deleteGameInfo(Board* b){
+	freeallchilds(b->root);
+	b->root->child=0;	
+	b->current=b->root;	
+}
+
+void deleteGameInfoI(int i){
+	Board *b=getBoardI(i);	
+
+	deleteGameInfo(b);
+}
+
+void back(Board* b){
+	GameNode* parent=b->current->parent;
+	if(parent!=0){
+		b->current=parent;
+		_memcpy((uint8_t*)b,(uint8_t*)&b->current->b,sizeof(Board));
+	}
+}
+
+void backI(int i){
+	Board *b=getBoardI(i);	
+
+	back(b);
+}
+
+void forward(Board* b){
+	GameNode* lastsibling=getlastsibling(b->current);
+	if(lastsibling!=0){
+		b->current=lastsibling;
+		_memcpy((uint8_t*)b,(uint8_t*)&b->current->b,sizeof(Board));
+	}
+}
+
+void forwardI(int i){
+	Board *b=getBoardI(i);	
+
+	forward(b);
+}
+
+void delete(Board* b){
+	freeallchilds(b->current);
+	back(b);
+	b->current->child=0;
+}
+
+void deleteI(int i){
+	Board *b=getBoardI(i);	
+
+	delete(b);
+}
+
+void tobegin(Board* b){
+	b->current=b->root;
+}
+
+void tobeginI(int i){
+	Board *b=getBoardI(i);	
+
+	tobegin(b);
+}
+
+void toend(Board* b){	
+	while(getlastsibling(b->current)!=0){
+		b->current=getlastsibling(b->current);
+	}
+}
+
+void toendI(int i){
+	Board *b=getBoardI(i);	
+
+	toend(b);
 }
