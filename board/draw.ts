@@ -133,6 +133,18 @@ export function draw(){
             spos("absolute").
             finalize()
 
+        /*let lt=new GlobalUtils.Timer("jslegal",this.log.bind(this))
+        for(let i=0;i<100;i++){
+            this.legalMoves()
+        }
+        lt.report()
+
+        lt=new GlobalUtils.Timer("wasmlegal",this.log.bind(this))
+        for(let i=0;i<100;i++){
+            this.wb.sortedLegalSanList()
+        }
+        lt.report()*/
+
         /*let moveinfos:[string,Move][]=this.legalMoves().map(x=>[this.moveToSan(x),x])
         moveinfos.sort((a:[string,Move],b:[string,Move])=>{
             if((a[0][0].toLocaleUpperCase()==a[0][0])&&(b[0][0].toLocaleUpperCase()!=b[0][0])) return -1
@@ -172,7 +184,8 @@ export function draw(){
             new Tab("pgn","PGN"),
             new Tab("log","Log"),
             new Tab("san","San"),
-            new Tab("pres","Pres")
+            new Tab("pres","Pres"),
+            new Tab("wlog","wLog")
         ])
         let pgncontrolsdiv=new Div_()
         let pgnkeytext=new Text_()
@@ -202,6 +215,12 @@ export function draw(){
         let pcb=new Button_("Connect",connecthandler.bind(this))
         presdiv.a(pcb)
         this.presdiv=presdiv
+        let wlogdiv=new Div_().        
+        swspx(this.width()).
+        sff("monospace").
+        finalize()
+        this.wlogdiv=wlogdiv
+        tp.setNode_("wlog",wlogdiv)
         tp.setNode_("pres",presdiv)
         tr1.a(tp)
         this.tabs=tp
@@ -421,8 +440,10 @@ function squaretoscreenvector(sq:Square):ScreenVector{
 function wboarddraw(){
     if(!this.HAS_WASM()) return
     let wb:wBoard=this.wb
-    console.log(wb.reportBoardText())
-    console.log(wb.out(2))    
+    this.wlogdiv.innerHTML(
+        "<pre>"+wb.reportBoardText()+"</pre>"+
+        wb.out(wb.OUTBUF2)
+    )    
 }
 
 }

@@ -1,13 +1,27 @@
 class wBoard extends GlobalUtils.WasmLoader{
+
+    ///////////////////////////////////////////////
+    // buffer name mappings
+
+    INBUF=0
+    OUTBUF=1
+    OUTBUF2=2
+    TEMPBUF=3
+    TEMPBUF2=4
+    OUTBUF3=5
+
+    ///////////////////////////////////////////////
+
     buffers:GlobalUtils.MemView[]
     inbuf:GlobalUtils.MemView
     callback:()=>void
     constructor(_callback:()=>void=null){
         super("assets/wasm/board/board.wasm",{
             "setTempRet0":x=>{},
-            "getTempRet0":x=>{},
+            "getTempRet0":x=>{},                        
             "_i64Add":x=>{}
-        })
+        })        
+        this.importObject.env["_conslog"]=()=>console.log(this.out(this.OUTBUF3))
         this.callback=_callback
         this.fetchThen(this.onload.bind(this))
     }
@@ -16,7 +30,7 @@ class wBoard extends GlobalUtils.WasmLoader{
         for(let i=0;i<this.exports._getNumStrBuffers();i++){
             this.buffers.push(this.memview(this.exports._addr(i), this.exports._getStrBufferLength()))
         }
-        this.inbuf=this.buffers[0]        
+        this.inbuf=this.buffers[this.INBUF]        
         if(this.callback!=null){
             this.callback()
         }
@@ -25,7 +39,7 @@ class wBoard extends GlobalUtils.WasmLoader{
         this.inbuf.strCpy(str)
         return this
     }
-    out(i:number=1):string{
+    out(i:number=this.OUTBUF):string{
         return this.buffers[i].toString()
     }
     toCase(_case:number){

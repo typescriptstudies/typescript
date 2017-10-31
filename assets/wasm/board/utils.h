@@ -42,6 +42,9 @@ typedef uint8_t* str;
 #define OUTBUF2 (uint8_t*)&buff[2]
 #define TEMPBUF (uint8_t*)&buff[3]
 #define TEMPBUF2 (uint8_t*)&buff[4]
+#define OUTBUF3 (uint8_t*)&buff[5]
+
+extern str logptr;
 
 // general utility functions
 
@@ -55,5 +58,11 @@ extern int absv(int x);
 extern void _memcpy(uint8_t* from,uint8_t* to,int size);
 extern str _strcpys(str from,str to,int size);
 extern void _swap(uint8_t* p1,uint8_t* p2,int size);
+
+extern void startlog();
+extern void lognum(int n);
+extern void logchar(uint8_t c);
+extern void logstr(uint8_t* s);
+extern void conslog();
 
 #endif

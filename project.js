@@ -1353,6 +1353,15 @@ var wBoard = /** @class */ (function (_super) {
             "getTempRet0": function (x) { },
             "_i64Add": function (x) { }
         }) || this;
+        ///////////////////////////////////////////////
+        // buffer name mappings
+        _this.INBUF = 0;
+        _this.OUTBUF = 1;
+        _this.OUTBUF2 = 2;
+        _this.TEMPBUF = 3;
+        _this.TEMPBUF2 = 4;
+        _this.OUTBUF3 = 5;
+        _this.importObject.env["_conslog"] = function () { return console.log(_this.out(_this.OUTBUF3)); };
         _this.callback = _callback;
         _this.fetchThen(_this.onload.bind(_this));
         return _this;
@@ -1362,7 +1371,7 @@ var wBoard = /** @class */ (function (_super) {
         for (var i = 0; i < this.exports._getNumStrBuffers(); i++) {
             this.buffers.push(this.memview(this.exports._addr(i), this.exports._getStrBufferLength()));
         }
-        this.inbuf = this.buffers[0];
+        this.inbuf = this.buffers[this.INBUF];
         if (this.callback != null) {
             this.callback();
         }
@@ -1372,7 +1381,7 @@ var wBoard = /** @class */ (function (_super) {
         return this;
     };
     wBoard.prototype.out = function (i) {
-        if (i === void 0) { i = 1; }
+        if (i === void 0) { i = this.OUTBUF; }
         return this.buffers[i].toString();
     };
     wBoard.prototype.toCase = function (_case) {
@@ -1607,6 +1616,17 @@ var BoardDraw;
                 sff("monospace").
                 spos("absolute").
                 finalize();
+            /*let lt=new GlobalUtils.Timer("jslegal",this.log.bind(this))
+            for(let i=0;i<100;i++){
+                this.legalMoves()
+            }
+            lt.report()
+    
+            lt=new GlobalUtils.Timer("wasmlegal",this.log.bind(this))
+            for(let i=0;i<100;i++){
+                this.wb.sortedLegalSanList()
+            }
+            lt.report()*/
             /*let moveinfos:[string,Move][]=this.legalMoves().map(x=>[this.moveToSan(x),x])
             moveinfos.sort((a:[string,Move],b:[string,Move])=>{
                 if((a[0][0].toLocaleUpperCase()==a[0][0])&&(b[0][0].toLocaleUpperCase()!=b[0][0])) return -1
@@ -1642,7 +1662,8 @@ var BoardDraw;
                 new Tab("pgn", "PGN"),
                 new Tab("log", "Log"),
                 new Tab("san", "San"),
-                new Tab("pres", "Pres")
+                new Tab("pres", "Pres"),
+                new Tab("wlog", "wLog")
             ]);
             var pgncontrolsdiv = new Div_();
             var pgnkeytext = new Text_();
@@ -1672,6 +1693,12 @@ var BoardDraw;
             var pcb = new Button_("Connect", connecthandler.bind(this));
             presdiv.a(pcb);
             this.presdiv = presdiv;
+            var wlogdiv = new Div_().
+                swspx(this.width()).
+                sff("monospace").
+                finalize();
+            this.wlogdiv = wlogdiv;
+            tp.setNode_("wlog", wlogdiv);
             tp.setNode_("pres", presdiv);
             tr1.a(tp);
             this.tabs = tp;
@@ -1880,8 +1907,8 @@ var BoardDraw;
         if (!this.HAS_WASM())
             return;
         var wb = this.wb;
-        console.log(wb.reportBoardText());
-        console.log(wb.out(2));
+        this.wlogdiv.innerHTML("<pre>" + wb.reportBoardText() + "</pre>" +
+            wb.out(wb.OUTBUF2));
     }
 })(BoardDraw || (BoardDraw = {}));
 var BoardUtils;

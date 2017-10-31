@@ -109,6 +109,7 @@ class Board {
     pgnvalueinput:Text_
     rootnode:Div_
     presdiv:Div_
+    wlogdiv:Div_
     fentext:Textarea_
     enginearrow:Div_
     depthdiv:Div_

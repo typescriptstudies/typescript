@@ -17,6 +17,9 @@ Move legalmovebuff[MAX_BOARDS][MAX_MOVES];
 Move tempmovebuff[MAX_BOARDS][MAX_MOVES];
 ExtendedMove extendedmovebuff[MAX_BOARDS][MAX_MOVES];
 
+str logptr;
+
+
 // general utility functions
 
 uint64_t addr(int buffer_index){
@@ -93,4 +96,24 @@ void _swap(uint8_t* p1,uint8_t* p2,int size){
 	_memcpy(p1,(uint8_t*)&swapbuff,size);
 	_memcpy(p2,p1,size);
 	_memcpy((uint8_t*)&swapbuff,p2,size);
+}
+
+void startlog(){
+	logptr=OUTBUF3;
+}
+
+void lognum(int n){
+	logptr=printNumber(n,logptr);
+}
+
+void logchar(uint8_t c){
+	*logptr++=c;
+	*logptr=0;
+}
+
+void logstr(uint8_t* s){
+	while(*s!=0){
+		*logptr++=*s++;
+	}
+	*logptr=0;
 }
